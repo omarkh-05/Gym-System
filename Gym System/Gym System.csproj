@@ -1,0 +1,366 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{24521501-D4EA-418F-B581-E570718126EA}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>Gym_System</RootNamespace>
+    <AssemblyName>Gym System</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <PublishUrl>G:\Gym System Deployment\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>1</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <PublishWizardCompleted>true</PublishWizardCompleted>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestCertificateThumbprint>2F2F52C5F77E7B2E3A113B1C403B17679910E0C8</ManifestCertificateThumbprint>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestKeyFile>Gym System_TemporaryKey.pfx</ManifestKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GenerateManifests>true</GenerateManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignManifests>true</SignManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>red_gym_icon-icons.com_59513.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Guna.UI2, Version=2.0.4.7, Culture=neutral, PublicKeyToken=8b9d14aa5142e261, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Debug\Guna.UI2.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration">
+      <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\System.Configuration.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Configuration.Install">
+      <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\System.Configuration.Install.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Core" />
+    <Reference Include="System.Design" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Add\Person And Employee.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Add\Person And Employee.Designer.cs">
+      <DependentUpon>Person And Employee.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Add\User.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Add\User.Designer.cs">
+      <DependentUpon>User.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\EmployeeControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\EmployeeControl.Designer.cs">
+      <DependentUpon>EmployeeControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\SubscriberControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\SubscriberControl.Designer.cs">
+      <DependentUpon>SubscriberControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\UserInfoControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\UserInfoControl.Designer.cs">
+      <DependentUpon>UserInfoControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Custom Controls\CircleBackGroundImage.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Custom Controls\CircleBackGroundImage.Designer.cs">
+      <DependentUpon>CircleBackGroundImage.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\InfoControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\InfoControl.Designer.cs">
+      <DependentUpon>InfoControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Employees\Employees Info.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Employees\Employees Info.Designer.cs">
+      <DependentUpon>Employees Info.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Form1.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form1.Designer.cs">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Custom Controls\NumberTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Custom Controls\NumberTextBox.Designer.cs">
+      <DependentUpon>NumberTextBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Presence\Employee PresenceID.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Presence\Employee PresenceID.Designer.cs">
+      <DependentUpon>Employee PresenceID.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Presence\Employees Presence.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Presence\Employees Presence.Designer.cs">
+      <DependentUpon>Employees Presence.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Presence\Gym PresenceID.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Presence\Gym PresenceID.Designer.cs">
+      <DependentUpon>Gym PresenceID.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Presence\Gym Presence.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Presence\Gym Presence.Designer.cs">
+      <DependentUpon>Gym Presence.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Custom Controls\RequiredComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Custom Controls\RequiredComboBox.Designer.cs">
+      <DependentUpon>RequiredComboBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Custom Controls\RequiredTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Custom Controls\RequiredTextBox.Designer.cs">
+      <DependentUpon>RequiredTextBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Subscribers\Subscribers Info.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Subscribers\Subscribers Info.Designer.cs">
+      <DependentUpon>Subscribers Info.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Subscription Info\Subscription Info.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Subscription Info\Subscription Info.Designer.cs">
+      <DependentUpon>Subscription Info.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserSession.cs" />
+    <Compile Include="Users\Login Screen.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Users\Login Screen.Designer.cs">
+      <DependentUpon>Login Screen.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Users\User Info.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Users\User Info.Designer.cs">
+      <DependentUpon>User Info.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="Add\Person And Employee.resx">
+      <DependentUpon>Person And Employee.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Add\User.resx">
+      <DependentUpon>User.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\EmployeeControl.resx">
+      <DependentUpon>EmployeeControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\InfoControl.resx">
+      <DependentUpon>InfoControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\SubscriberControl.resx">
+      <DependentUpon>SubscriberControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\UserInfoControl.resx">
+      <DependentUpon>UserInfoControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Employees\Employees Info.resx">
+      <DependentUpon>Employees Info.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Form1.resx">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Presence\Employee PresenceID.resx">
+      <DependentUpon>Employee PresenceID.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Presence\Employees Presence.resx">
+      <DependentUpon>Employees Presence.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Presence\Gym PresenceID.resx">
+      <DependentUpon>Gym PresenceID.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Presence\Gym Presence.resx">
+      <DependentUpon>Gym Presence.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <EmbeddedResource Include="Subscribers\Subscribers Info.resx">
+      <DependentUpon>Subscribers Info.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Subscription Info\Subscription Info.resx">
+      <DependentUpon>Subscription Info.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Users\Login Screen.resx">
+      <DependentUpon>Login Screen.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Users\User Info.resx">
+      <DependentUpon>User Info.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="Gym System_TemporaryKey.pfx" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\7812e4c5-7943-4d4c-89b1-35997beaf150.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\User.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\User1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\user_attributes_70dp_F19E39_FILL0_wght400_GRAD0_opsz48.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Add.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Subscribers.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Employee.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Presence.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\SubInfo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\MainPic.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Person.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\User11.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Logout.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\image.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BussinessLayer\BussinessLayer.csproj">
+      <Project>{663e0674-632d-4beb-9ca0-23680267add5}</Project>
+      <Name>BussinessLayer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Entities\Entities.csproj">
+      <Project>{04ef67c3-8e35-4bae-8850-d1c55a85412e}</Project>
+      <Name>Entities</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\AddPeopleBG.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\MainMenuBG.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\finger_print_icon_234151.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.8">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.8 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="red_gym_icon-icons.com_59513.ico" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
