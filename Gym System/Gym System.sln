@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataLayer", "..\DataLayer\D
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Entities", "..\Entities\Entities.csproj", "{04EF67C3-8E35-4BAE-8850-D1C55A85412E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GymSystemAPI", "..\GymSystemAPI\GymSystemAPI.csproj", "{31EBD800-455A-4BBF-ABEA-7F7A1E35FBA0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +37,10 @@ Global
 		{04EF67C3-8E35-4BAE-8850-D1C55A85412E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{04EF67C3-8E35-4BAE-8850-D1C55A85412E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{04EF67C3-8E35-4BAE-8850-D1C55A85412E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{31EBD800-455A-4BBF-ABEA-7F7A1E35FBA0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{31EBD800-455A-4BBF-ABEA-7F7A1E35FBA0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{31EBD800-455A-4BBF-ABEA-7F7A1E35FBA0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{31EBD800-455A-4BBF-ABEA-7F7A1E35FBA0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

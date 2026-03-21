@@ -2,10 +2,14 @@
 using Entities;
 using System;
 using System.Data;
+using System.Threading.Tasks;
 
 namespace BussinessLayer
 {
-    public class SubscribersBLL
+    public interface ISubscribersBLL
+    {
+    }
+    public class SubscribersBLL : ISubscribersBLL
     {
         private enum enMode { AddMode = 1, UpdateMode = 2 };
         enMode _mode = enMode.AddMode;

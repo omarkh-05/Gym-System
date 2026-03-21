@@ -2,6 +2,7 @@
 using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using Entities;
 
 namespace DataLayer
@@ -10,7 +11,6 @@ namespace DataLayer
     {
         private static string connectionString = Settings.connectionstring;
 
-     
 
         #region Add New Subscriber
         public static int AddNewSubscriber(Subscriber subscriber)
@@ -63,7 +63,6 @@ namespace DataLayer
 
             return newId;
         }
-
         #endregion
 
 
@@ -135,7 +134,7 @@ namespace DataLayer
         #endregion
 
 
-        #region Get Subscriber By ID
+        #region Get Subscriber
         public static Subscriber GetSubscriberByID(int subscriberID)
         {
             Subscriber subscriber = null;
