@@ -87,7 +87,8 @@ builder.Services.AddCors(options =>
     {
         policy.WithOrigins(
             "http://127.0.0.1:5501", // الرابط المحلي لواجهة المستخدم
-            "https://omarkh-05.github.io"
+            "https://omarkh-05.github.io",
+            "http://127.0.0.1:4040"
         )
         .AllowAnyHeader()
         .AllowAnyMethod()
