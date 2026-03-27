@@ -86,7 +86,8 @@ builder.Services.AddCors(options =>
     options.AddPolicy("GymSystemAPIpolicy", policy =>
     {
         policy.WithOrigins(
-            "http://127.0.0.1:5501" // الرابط المحلي لواجهة المستخدم
+            "http://127.0.0.1:5501", // الرابط المحلي لواجهة المستخدم
+            "https://omarkh-05.github.io"
         )
         .AllowAnyHeader()
         .AllowAnyMethod()
