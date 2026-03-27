@@ -28,13 +28,12 @@ namespace BussinessLayer
         public int NationalityID { get; set; }
 
         [Required]
-        public string Address { get; set; }
+        public string Address { get; set; } = string.Empty;
 
         [Required]
         public bool HasDisease { get; set; }
 
-        [Required]
-        public string PersonType { get; set; }
+        public string PersonType { get; set; } = "Subscriber";
 
         [Required]
         public DateTime DateOfBirth { get; set; }

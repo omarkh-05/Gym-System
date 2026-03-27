@@ -1,8 +1,10 @@
-﻿namespace BussinessLayer
+﻿using Entities;
+
+namespace BussinessLayer
 {
     public class TokenResponse
     {
-        public string AccessToken { get; set; }
+        public Person User { get; set; }
         public string RefreshToken { get; set; }
     }
 }

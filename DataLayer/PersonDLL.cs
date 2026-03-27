@@ -1,14 +1,15 @@
 ﻿using Entities;
+using Microsoft.Data.Sql;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
+using System.Data.Common;
 using System.Data.SqlClient;
-using Microsoft.Data.Sql;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Configuration;
 
 namespace DataLayer
 {
@@ -103,6 +104,42 @@ namespace DataLayer
             return user;
         }
 
+        public static async Task<Person> GetByRefreshTokenId(Guid tokenId)
+        {
+            Person user = null;
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                using (SqlCommand cmd = new SqlCommand("SP_GetPersonByTokenId", con))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@Id", tokenId);
+
+                    await con.OpenAsync();
+                    using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
+                    {
+                        if (await reader.ReadAsync())
+                        {
+                            user = new Person
+                            {
+                                PersonID = Convert.ToInt32(reader["PersonID"]),
+                                PhoneNo = reader["PhoneNumber"]?.ToString(),
+                                PersonType = reader["PersonType"]?.ToString(),
+                                RefreshTokenId = reader.GetGuid(reader.GetOrdinal("RefreshTokenId")),
+                                RefreshTokenHash = reader["RefreshTokenHash"]?.ToString(),
+                                RefreshTokenExpiresAt = reader["RefreshTokenExpiresAt"] as DateTime?,
+                                RefreshTokenRevokedAt = reader["RefreshTokenRevokedAt"] as DateTime?
+                            };
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                EventLog.WriteEntry("Application", $"GetAuthUserByPhoneNumber Error: {ex.Message}", EventLogEntryType.Error);
+            }
+            return user;
+        }
         public static async Task<bool> UpdateAuth(Person person)
         {
             try
@@ -113,6 +150,7 @@ namespace DataLayer
                     cmd.CommandType = CommandType.StoredProcedure;
 
                     cmd.Parameters.Add("@personId", SqlDbType.Int).Value = person.PersonID;
+                    cmd.Parameters.Add("@RefreshTokenId", SqlDbType.UniqueIdentifier).Value = (Guid)person.RefreshTokenId;
                     cmd.Parameters.Add("@RefreshTokenHash", SqlDbType.NVarChar, 500).Value = (object)person.RefreshTokenHash ?? DBNull.Value;
                     cmd.Parameters.Add("@RefreshTokenExpiresAt", SqlDbType.DateTime2).Value = (object)person.RefreshTokenExpiresAt ?? DBNull.Value;
                     cmd.Parameters.Add("@RefreshTokenRevokedAt", SqlDbType.DateTime2).Value = (object)person.RefreshTokenRevokedAt ?? DBNull.Value;

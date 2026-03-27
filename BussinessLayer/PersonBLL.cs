@@ -2,6 +2,8 @@
 using Entities;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,6 +13,7 @@ namespace BussinessLayer
 {
     public interface IPersonBLL
     {
+        Task<Person> GetByRefreshTokenId(Guid tokenId);
         Task<int> RegisterPerson(Person person);
         Task<Person> GetPersonByPhone(string phoneNumber);
         Task<bool> UpdateAuth(Person person);
@@ -43,6 +46,11 @@ namespace BussinessLayer
             return await PersonDLL.GetAuthUserByPhoneNumber(phoneNumber);
         }
 
+        public async Task<Person> GetByRefreshTokenId(Guid tokenId)
+        {
+            return await PersonDLL.GetByRefreshTokenId(tokenId);
+        }
+
         public async Task<bool> UpdateAuth(Person person)
         {
             return await PersonDLL.UpdateAuth(person);
@@ -52,5 +60,6 @@ namespace BussinessLayer
         {
             return await PersonDLL.RegisterPerson(person);
         }
+
     }
 }

@@ -1,22 +1,16 @@
 ﻿using Entities;
-using Microsoft.Extensions.Configuration;
 using System;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BussinessLayer
 {
-
     public interface IAuthService
     {
         Task<TokenResponse> LoginAsync(LoginRequest request);
         Task RegisterAsync(RegisterRequest request);
-        Task<TokenResponse> RefreshAsync(string refreshToken, string phoneNumber);
-        Task<bool> LogoutAsync(string refreshToken, LogoutRequest request);
+        Task<TokenResponse> RefreshAsync(string refreshToken);
+        Task<bool> LogoutAsync(string refreshToken);
     }
 
     public class AuthServiceBLL : IAuthService
@@ -28,21 +22,17 @@ namespace BussinessLayer
             _personBLL = personBLL;
         }
 
-        // ================= LOGIN =================
         public async Task<TokenResponse> LoginAsync(LoginRequest request)
         {
             var sub = await _personBLL.GetPersonByPhone(request.PhoneNumber);
 
-            if (sub == null)
+            if (sub == null || !BCrypt.Net.BCrypt.Verify(request.Password, sub.PasswordHash))
                 throw new UnauthorizedAccessException("Invalid credentials");
 
-            if (!BCrypt.Net.BCrypt.Verify(request.Password, sub.PasswordHash))
-                throw new UnauthorizedAccessException("Invalid credentials");
-
-            // توليد التوكن المزيف
-            var accessToken = GenerateFakeAccessToken(sub);
+            var refreshTokenId = Guid.NewGuid();
             var refreshToken = GenerateRefreshToken();
 
+            sub.RefreshTokenId = refreshTokenId;
             sub.RefreshTokenHash = BCrypt.Net.BCrypt.HashPassword(refreshToken);
             sub.RefreshTokenExpiresAt = DateTime.UtcNow.AddDays(7);
             sub.RefreshTokenRevokedAt = null;
@@ -51,56 +41,74 @@ namespace BussinessLayer
 
             return new TokenResponse
             {
-                AccessToken = accessToken,
-                RefreshToken = refreshToken
+                User = sub,
+                RefreshToken = $"{refreshTokenId}.{refreshToken}"
             };
         }
 
-        // ================= REFRESH =================
-        public async Task<TokenResponse> RefreshAsync(string refreshToken, string phoneNumber)
+        public async Task<TokenResponse> RefreshAsync(string refreshToken)
         {
-            var sub = await _personBLL.GetPersonByPhone(phoneNumber);
+            var parts = refreshToken.Split('.');
+            if (parts.Length != 2)
+                throw new UnauthorizedAccessException("Invalid token format");
+
+            if (!Guid.TryParse(parts[0], out Guid tokenId))
+                throw new UnauthorizedAccessException("Invalid token 1");
+
+            var secret = parts[1];
+
+            var sub = await _personBLL.GetByRefreshTokenId(tokenId);
 
             if (sub == null)
-                throw new UnauthorizedAccessException();
+                throw new UnauthorizedAccessException("Invalid token 2");
 
             if (sub.RefreshTokenRevokedAt != null || sub.RefreshTokenExpiresAt <= DateTime.UtcNow)
-                throw new UnauthorizedAccessException();
+                throw new UnauthorizedAccessException("Token expired");
 
-            if (!BCrypt.Net.BCrypt.Verify(refreshToken, sub.RefreshTokenHash))
-                throw new UnauthorizedAccessException("Invalid token");
+            if (!BCrypt.Net.BCrypt.Verify(secret, sub.RefreshTokenHash))
+                throw new UnauthorizedAccessException("Invalid token 3");
 
-            var newAccess = GenerateFakeAccessToken(sub); // توكن جديد مزيف
-            var newRefresh = GenerateRefreshToken();
+            // 🔄 Rotation
+            var newTokenId = Guid.NewGuid();
+            var newSecret = GenerateRefreshToken();
 
-            sub.RefreshTokenHash = BCrypt.Net.BCrypt.HashPassword(newRefresh);
+            sub.RefreshTokenId = newTokenId;
+            sub.RefreshTokenHash = BCrypt.Net.BCrypt.HashPassword(newSecret);
             sub.RefreshTokenExpiresAt = DateTime.UtcNow.AddDays(7);
+            sub.RefreshTokenRevokedAt = null;
 
             await _personBLL.UpdateAuth(sub);
 
             return new TokenResponse
             {
-                AccessToken = newAccess,
-                RefreshToken = newRefresh
+                User = sub,
+                RefreshToken = $"{newTokenId}.{newSecret}"
             };
         }
 
-        // ================= LOGOUT =================
-        public async Task<bool> LogoutAsync(string refreshToken, LogoutRequest request)
+        public async Task<bool> LogoutAsync(string refreshToken)
         {
-            var sub = await _personBLL.GetPersonByPhone(request.PhoneNumber);
+            var parts = refreshToken.Split('.');
+            if (parts.Length != 2) return false;
+
+            if (!Guid.TryParse(parts[0], out Guid tokenId))
+                return false;
+
+            var secret = parts[1];
+
+            var sub = await _personBLL.GetByRefreshTokenId(tokenId);
 
             if (sub == null || sub.RefreshTokenHash == null)
                 return false;
 
-            if (!BCrypt.Net.BCrypt.Verify(refreshToken, sub.RefreshTokenHash))
+            if (!BCrypt.Net.BCrypt.Verify(secret, sub.RefreshTokenHash))
                 return false;
 
             sub.RefreshTokenRevokedAt = DateTime.UtcNow;
+
             return await _personBLL.UpdateAuth(sub);
         }
 
-        // ================= REGISTER =================
         public async Task RegisterAsync(RegisterRequest request)
         {
             var existing = await _personBLL.GetPersonByPhone(request.PhoneNumber);
@@ -124,14 +132,6 @@ namespace BussinessLayer
             if (id <= 0) throw new Exception("Register failed");
         }
 
-        // ================= Fake Access Token =================
-        private string GenerateFakeAccessToken(Person sub)
-        {
-            // أي نص عشوائي كتوكن مؤقت
-            var token = Guid.NewGuid().ToString() + "-" + sub.PersonID;
-            return Convert.ToBase64String(Encoding.UTF8.GetBytes(token));
-        }
-
         private string GenerateRefreshToken()
         {
             var bytes = new byte[64];
@@ -141,4 +141,3 @@ namespace BussinessLayer
         }
     }
 }
-

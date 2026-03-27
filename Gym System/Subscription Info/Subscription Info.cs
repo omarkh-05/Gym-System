@@ -161,7 +161,7 @@ namespace Gym_System.Subscription_Info
         {
             tbstartTime.Text = sub.StartTime?.ToString() ?? "";
             tbendTime.Text = sub.EndTime?.ToString() ?? "";
-            tbDepartmentName.Text = sub.DepartmentName;
+            tbDepartmentName.Text = sub.PackageName;
             tbFees.Text = sub.Fees.ToString();
             tbMinAge.Text = sub.MinAge.ToString();
             tbSubscriptionDuration.Text = sub.SubscriptionDuration.ToString();
@@ -174,7 +174,7 @@ namespace Gym_System.Subscription_Info
             TimeSpan tmp;
             _subscription.StartTime = TimeSpan.TryParse(tbstartTime.Text, out tmp) ? tmp : (TimeSpan?)null;
             _subscription.EndTime = TimeSpan.TryParse(tbendTime.Text, out tmp) ? tmp : (TimeSpan?)null;
-            _subscription.DepartmentName = tbDepartmentName.Text;
+            _subscription.PackageName = tbDepartmentName.Text;
             _subscription.Fees = decimal.TryParse(tbFees.Text, out decimal fee) ? fee : 0;
             _subscription.MinAge = byte.TryParse(tbMinAge.Text, out byte minAge) ? minAge : (byte)0;
             _subscription.SubscriptionDuration = byte.TryParse(tbSubscriptionDuration.Text, out byte duration) ? duration : (byte)0;

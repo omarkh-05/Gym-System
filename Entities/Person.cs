@@ -15,7 +15,7 @@ namespace Entities
         public string    NationalNo     { get; set; }
         public string    PhoneNo        { get; set; }
         public int       NationalityID  { get; set; }
-        public string    Address        { get; set; }
+        public string   Address        { get; set; }
         public string    EnterID        { get; set; }
         public string    PersonType     { get; set; }
         public bool      HasDisease     { get; set; }
@@ -26,5 +26,6 @@ namespace Entities
         public string RefreshTokenHash { get; set; } = null;
         public DateTime? RefreshTokenExpiresAt { get; set; } = null;
         public DateTime? RefreshTokenRevokedAt { get; set; } = null;
+        public Guid RefreshTokenId { get; set; }
     }
 }

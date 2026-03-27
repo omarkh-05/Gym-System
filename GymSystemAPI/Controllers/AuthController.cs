@@ -1,7 +1,9 @@
 ﻿using BussinessLayer;
-using Microsoft.AspNetCore.Http;
+using GymSystemAPI.Helper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
+using System.Security.Claims;
 
 namespace GymSystemAPI.Controllers
 {
@@ -10,17 +12,21 @@ namespace GymSystemAPI.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
+        private readonly AccessToken _accessToken;
+        readonly ILogger<AuthController> _logger;
 
-        public AuthController(IAuthService authService)
+        public AuthController(IAuthService authService, AccessToken accessToken, ILogger<AuthController> logger)
         {
             _authService = authService;
+            _accessToken = accessToken;
+            _logger = logger;
         }
 
         [HttpPost("Login")]
         [EnableRateLimiting("AuthLimiter")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
             try
@@ -29,25 +35,33 @@ namespace GymSystemAPI.Controllers
                     return BadRequest("credentials are required");
 
                 var result = await _authService.LoginAsync(request);
-
+                var accessToken = _accessToken.GenerateAccessToken(result.User);
 
                 Response.Cookies.Append("refreshToken", result.RefreshToken, new CookieOptions
                 {
                     HttpOnly = true,
-                    Secure = true, // in production it must be true
-                    SameSite = SameSiteMode.None, // in production it must be SameSiteMode.Strict - مهم عند cross-origin (127.0.0.1:5500 → localhost:7018)
+                    Secure = true, // if we use https we use true
+                    SameSite = SameSiteMode.None, // because we use http
                     Expires = DateTime.UtcNow.AddDays(7),
                     Path = "/"
                 });
 
-                return Ok(result);
+                Response.Cookies.Append("accessToken", accessToken, new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = true, // خليها true في production
+                    SameSite = SameSiteMode.None,
+                    Expires = DateTime.UtcNow.AddMinutes(15),
+                    Path = "/"
+                });
+
+                return Ok();
             }
             catch (UnauthorizedAccessException)
             {
-                return NotFound("Invalid credentials");
+                return Unauthorized("Invalid credentials");
             }
         }
-
 
         [HttpPost("Register")]
         [EnableRateLimiting("AuthLimiter")]
@@ -58,9 +72,8 @@ namespace GymSystemAPI.Controllers
             try
             {
                 if (request == null)
-                {
                     return BadRequest("Invalid registration data");
-                }
+
                 await _authService.RegisterAsync(request);
                 return Ok(new { message = "User registered successfully" });
             }
@@ -70,35 +83,39 @@ namespace GymSystemAPI.Controllers
             }
         }
 
-
         [HttpPost("Refresh")]
         [EnableRateLimiting("AuthLimiter")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<IActionResult> Refresh([FromBody] RefreshRequest request)
+        public async Task<IActionResult> Refresh()
         {
             try
             {
-                if (string.IsNullOrEmpty(request.PhoneNumber))
-                    return BadRequest("Phone number is required");
+               if (!Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+                   throw new UnauthorizedAccessException("Refresh token missing");
 
-                // اقرأ refresh token من HttpOnly cookie
-                if (!Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
-                    throw new UnauthorizedAccessException("Refresh token missing");
+                var result = await _authService.RefreshAsync(refreshToken);
+                var newAccessToken = _accessToken.GenerateAccessToken(result.User);
 
-                var result = await _authService.RefreshAsync(refreshToken, request.PhoneNumber);
-
-                // ضع refresh token الجديد في HttpOnly cookie
                 Response.Cookies.Append("refreshToken", result.RefreshToken, new CookieOptions
                 {
                     HttpOnly = true,
-                    Secure = true, // in production it must be true
-                    SameSite = SameSiteMode.None, // in production it must be SameSiteMode.Strict - مهم عند cross-origin (127.0.0.1:5500 → localhost:7018)
+                    Secure = true,
+                    SameSite = SameSiteMode.None,
                     Expires = DateTime.UtcNow.AddDays(7),
                     Path = "/"
                 });
 
-                return Ok(new { AccessToken = result.AccessToken });
+                Response.Cookies.Append("accessToken", newAccessToken, new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = true,
+                    SameSite = SameSiteMode.None,
+                    Expires = DateTime.UtcNow.AddMinutes(15),
+                    Path = "/"
+                });
+
+                return Ok();
             }
             catch (UnauthorizedAccessException ex)
             {
@@ -106,27 +123,36 @@ namespace GymSystemAPI.Controllers
             }
         }
 
-
+        [Authorize]
         [HttpPost("Logout")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Logout([FromBody] LogoutRequest request)
+        public async Task<IActionResult> Logout()
         {
-            if (string.IsNullOrEmpty(request.PhoneNumber))
-                return BadRequest("Phone number is required");
-
             if (!Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
-                throw new UnauthorizedAccessException("Refresh token missing");
+                return NotFound("Refresh token missing");
 
-            if (await _authService.LogoutAsync(refreshToken, request))
+            if (await _authService.LogoutAsync(refreshToken))
             {
                 Response.Cookies.Delete("refreshToken");
+                Response.Cookies.Delete("accessToken");
                 return Ok("Logged out successfully");
             }
 
             return BadRequest("Logout Error Try Again");
         }
 
+        [HttpGet("CheckAuth")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public IActionResult CheckAuth()
+        {
+            var phoneNumber = User.FindFirst(ClaimTypes.MobilePhone)?.Value;
+            if (string.IsNullOrEmpty(phoneNumber))
+                return Unauthorized("Invalid token");;
+
+            return Ok();
+        }
+
     }
 }
-

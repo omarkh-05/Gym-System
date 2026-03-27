@@ -1,4 +1,5 @@
 ﻿using DataLayer;
+using Entities;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -29,7 +30,6 @@ namespace BussinessLayer
         {
             return CheckinPresenceDLL.GetAllCheckoutRegister();
         }
-
 
         public static string RegisterEmployeeCheckin(string ID)
         {

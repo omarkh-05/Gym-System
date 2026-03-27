@@ -40,6 +40,17 @@ namespace BussinessLayer
             return SubsicriptionInfoDLL.GetAllSubsicriptionInfo();
         }
 
+       public static async Task<List<SubscriptionsPackages>> GetAllGymSubPackages()
+        {
+            return await SubsicriptionInfoDLL.GetAllGymSubPackages();
+        }
+
+        public static async Task<double> GetPackFeesByPackageName(string packageName)
+        {
+            return await SubsicriptionInfoDLL.GetPackFeesByPackageName(packageName);
+        }
+
+
         public static SubscriptionInfo Find(byte subTimeID)
         {
             return SubsicriptionInfoDLL.GetSubscriptionByID(subTimeID);

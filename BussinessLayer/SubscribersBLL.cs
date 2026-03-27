@@ -8,6 +8,8 @@ namespace BussinessLayer
 {
     public interface ISubscribersBLL
     {
+        Task<int> AddSubscribersFE(AddSubscriberDTO subscriber,int personId);
+        Task<SubscriberDTO> GetSubscriberByPersonId(int personId);
     }
     public class SubscribersBLL : ISubscribersBLL
     {
@@ -52,6 +54,12 @@ namespace BussinessLayer
             return _subscriber.SubscriberID != -1;
         }
 
+        public async Task<int> AddSubscribersFE(AddSubscriberDTO subscriber,int personId)
+        {
+            subscriber.PersonId = personId;
+            return await SubscribersDLL.AddNewSubscriberFE(subscriber);
+        }
+
         private bool _Update()
         {
             // تأكد أن SubscriberID > 0 قبل التحديث
@@ -69,6 +77,11 @@ namespace BussinessLayer
         public static Subscriber Find(int subID)
         {
             return SubscribersDLL.GetSubscriberByID(subID);
+        }
+
+       public async Task<SubscriberDTO> GetSubscriberByPersonId(int personId)
+        {
+            return await SubscribersDLL.GetSubscriberByPersonId(personId);
         }
 
         public bool Save()

@@ -1,11 +1,13 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.Threading.RateLimiting;
-using Microsoft.OpenApi.Models;
-using System.Text;
+﻿using BussinessLayer;
 using GymSystemApi.Authorization;
-using BussinessLayer;
+using GymSystemAPI.Helper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using System.Security.Claims;
+using System.Text;
+using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,7 +19,8 @@ builder.Services.AddControllers();
 
 builder.Services.AddScoped<IPersonBLL, PersonBLL>();
 builder.Services.AddScoped<IAuthService, AuthServiceBLL>();
-
+builder.Services.AddScoped<ISubscribersBLL, SubscribersBLL>();
+builder.Services.AddScoped<AccessToken>();
 
 #region Swagger
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -83,7 +86,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("GymSystemAPIpolicy", policy =>
     {
         policy.WithOrigins(
-            "http://127.0.0.1:5500" // الرابط المحلي لواجهة المستخدم
+            "http://127.0.0.1:5501" // الرابط المحلي لواجهة المستخدم
         )
         .AllowAnyHeader()
         .AllowAnyMethod()
@@ -125,6 +128,21 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             // This must be the same key used when generating the token.
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
 
+        };
+
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                var token = context.Request.Cookies["accessToken"];
+
+                if (!string.IsNullOrEmpty(token))
+                {
+                    context.Token = token;
+                }
+
+                return Task.CompletedTask;
+            }
         };
     });
 #endregion
@@ -202,6 +220,44 @@ app.Use(async (context, next) =>
 app.UseAuthentication();
 
 app.UseAuthorization();
+
+// ✅ Step 6: Global 403 logging middleware (place it HERE)
+
+// او ممكن احط في كل اندبوينت لوج برضو خاص او زي هيك عادي
+app.Use(async (context, next) =>
+{
+    await next();
+
+    // لاحظ أنه يمكن تسجيل أكثر من حالة
+    int statusCode = context.Response.StatusCode;
+
+    if (statusCode == StatusCodes.Status401Unauthorized || statusCode == StatusCodes.Status403Forbidden || statusCode == StatusCodes.Status404NotFound || statusCode == StatusCodes.Status400BadRequest)
+    {
+        var userId = context.User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "anonymous";
+        var ip = context.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+        var path = context.Request.Path.ToString();
+        var reason = statusCode == 401 ? "Unauthorized" : "Forbidden";
+
+        string logMessage = $"Security Alert: {reason}. UserId={userId}, Path={path}, IP={ip}";
+
+        // سجل في Logger أول
+        app.Logger.LogWarning(logMessage);
+
+        // سجل في Event Viewer
+     //   try
+     //   {
+     //       if (!System.Diagnostics.EventLog.SourceExists("GymSystemAPI"))
+     //       {
+     //           System.Diagnostics.EventLog.CreateEventSource("GymSystemAPI", "Application");
+     //       }
+     //       System.Diagnostics.EventLog.WriteEntry("GymSystemAPI", logMessage,  System.Diagnostics.EventLogEntryType.Warning);
+     //   }
+     //   catch (Exception ex)
+     //   {
+     //       app.Logger.LogError("Failed to write security log to Event Viewer: {0}", ex.Message);
+     //   }
+    }
+});
 
 app.MapControllers();
 
